@@ -1,0 +1,35 @@
+[package]
+name = "server-cmd"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+default-run = "mywebnote"
+
+[lints]
+workspace = true
+
+[dependencies]
+# This Project Sub Modules.
+server-core.workspace = true
+# Specifical libraries.
+clap = "4.5.7"
+# Thridparty libraries.
+serde_json.workspace = true
+serde_yaml.workspace = true
+mimalloc.workspace = true
+tokio.workspace = true
+axum.workspace = true
+axum-prometheus.workspace = true
+tower.workspace = true
+tower-http.workspace = true
+tower-cookies.workspace = true
+lazy_static.workspace = true
+log.workspace = true
+tracing.workspace = true
+
+[[bin]]
+name = "mywebnote"
+path = "src/bin/mywebnote.rs"
+
+[build-dependencies]
+chrono = { version = "0.4.38", default-features = false, features = ["clock"] }

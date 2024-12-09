@@ -1,0 +1,109 @@
+[package]
+name = "server-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# This Project Sub Modules.
+common-log.workspace = true
+server-utils.workspace = true
+server-types.workspace = true
+# Specifical libraries.
+# Thirdparty libraries.
+config.workspace = true
+# Lang libs.
+regex.workspace = true
+chrono = { version = "0.4.38", features = ["serde"] }
+uuid = { version = "1.9.1", default-features = false, features = ["v4"] }
+thiserror.workspace = true
+anyhow.workspace = true
+arc-swap.workspace = true
+once_cell.workspace = true
+sysinfo.workspace = true
+base64.workspace = true
+hex.workspace = true
+snafu.workspace = true # human process error lib.
+strum = { version = "0.25", features = ["derive"] }
+#rand.workspace = true
+#syrette.workspace = true
+mimalloc = { version = "0.1.43", default-features = false }
+local-ip-address.workspace = true
+# Command line libs.
+clap.workspace = true
+# Serialization libs.
+serde = { version = "1.0.197", features = ["derive"] }
+serde_json.workspace = true
+serde_yaml.workspace = true
+validator = { version = "0.18.1", features = ["derive"] }
+# Logger libs.
+env_logger.workspace = true
+log.workspace = true
+# Prometheus libs.
+lazy_static.workspace = true
+prometheus.workspace = true
+axum-prometheus.workspace = true
+# Tracing libs.
+tracing.workspace = true
+tracing-subscriber = { version = "0.3.18", features = ["json", "env-filter"] }
+tracing-opentelemetry.workspace = true
+tracing-futures.workspace = true
+tracing-attributes.workspace = true
+opentelemetry.workspace = true
+opentelemetry_sdk = { version = "0.23.0", features = ["rt-tokio"] }
+opentelemetry-otlp = { version = "0.16.0", features = ["grpc-tonic"] }
+opentelemetry-http = { version = "0.12.0" }
+# Async core libs.
+tokio = { version = "1.38.0", features = ["full", "tracing"] }
+# Async core trait polymorphism libs.
+async-trait.workspace = true
+# Web HTTP libs.
+axum.workspace = true
+hyper = { version = "1.3.1", features = ["full"] }
+tower = "0.4.1"
+tower-http = { version = "0.5.2", features = ["trace", "auth"] }
+tower-cookies.workspace = true
+globset.workspace = true # ant glob path patterns
+#user_agent.workspace = true
+rust-embed.workspace = true
+mime_guess.workspace = true
+#include_dir.workspace = true
+# Database libs.
+mongodb.workspace = true
+futures.workspace = true
+sqlx = { version = "0.7.4", features = [
+    "runtime-tokio-rustls",
+    # "runtime-async-std",
+    "sqlite",
+    "macros",
+    "chrono"
+] }
+idb = { version = "0.6.3", features = ["builder", "doc", "futures", "tokio"] }
+serde-wasm-bindgen = "0.6.5"
+wasm-bindgen = "0.2.93"
+# Swagger libs.
+utoipa = { version = "4.2.3", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "7.1.0", features = ["axum"] }
+mac_address.workspace = true
+# Auth libs.
+reqwest = { version = "0.12.5", features = ["json"] }
+url.workspace = true
+oauth2.workspace = true
+openidconnect.workspace = true
+jsonwebtoken.workspace = true
+# Encrypt libs.
+openssl.workspace = true
+rsa.workspace = true
+sha2.workspace = true
+# Cache libs.
+moka = { version = "0.12.8", features = ["future"] }
+redis = { version = "0.25.4", features = ["tokio-comp", "cluster-async"] }
+# Ethers libs.
+ethers = { version = "2.0.14", features = ["abigen", "ws", "rustls"] }
+eyre.workspace = true
+
+[build-dependencies]
+chrono = { version = "0.4.38", default-features = false, features = ["clock"] }
