@@ -11,7 +11,7 @@ use server_types::user::{
     User,
 };
 use server_types::{ BaseBean, PageRequest, PageResponse };
-use common_log::audit_log;
+use common_audit_log::audit_log;
 
 #[async_trait]
 pub trait IUserHandler: Send {

@@ -9,7 +9,7 @@ default-run = "mywebnote"
 workspace = true
 
 [dependencies]
-# This Project Sub Modules.
+# Project sub-modules.
 server-core.workspace = true
 # Specifical libraries.
 clap = "4.5.7"

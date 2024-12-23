@@ -21,9 +21,12 @@
 [workspace]
 members = [
     "benchmarks",
+    "src/common/audit-log",
     "src/common/error",
     "src/common/macro",
+    "src/common/makestruct",
     "src/common/mem-prof",
+    "src/common/telemetry",
     "src/cmd",
     "src/core",
     "src/types",
@@ -37,7 +40,7 @@ edition = "2021"
 authors = ["James Wong"]
 description = "A simple generic of web note server."
 documentation = "https://github.com/wl4g/my-webnote"
-license = "Apache-2.0"
+license = "GPL-3.0"
 
 [workspace.lints]
 clippy.print_stdout = "warn"
@@ -46,6 +49,17 @@ clippy.implicit_clone = "warn"
 rust.unknown_lints = "deny"
 
 [workspace.dependencies]
+# workspaces members
+common-audit-log = { path = "src/common/audit-log" }
+common-error = { path = "src/common/error" }
+common-macro = { path = "src/common/macro" }
+common-makestruct = { path = "src/common/makestruct" }
+common-mem-prof = { path = "src/common/mem-prof" }
+common-telemetry = { path = "src/common/telemetry" }
+server-cmd = { path = "src/cmd" }
+server-core = { path = "src/core" }
+server-types = { path = "src/types" }
+server-utils = { path = "src/utils" }
 # Lang libs.
 regex = "1.10.3"
 chrono = { version = "0.4.38", features = ["serde"] }
@@ -94,6 +108,7 @@ opentelemetry = { version = "0.23.0" }
 opentelemetry_sdk = { version = "0.23.0", features = ["rt-tokio"] }
 opentelemetry-otlp = { version = "0.16.0", features = ["grpc-tonic"] }
 opentelemetry-http = { version = "0.12.0" }
+#opentelemetry-semantic-conventions = "0.13.0"
 #
 # Async core libs.
 tokio = { version = "1.38.0", features = ["full", "tracing"] }
@@ -145,31 +160,3 @@ redis = { version = "0.25.4", features = ["tokio-comp", "cluster-async"] }
 # Ethers libs.
 ethers = { version = "2.0.14", features = ["abigen", "ws", "rustls"] }
 eyre = "0.6.12"
-# workspaces members
-common-error = { path = "src/common/error" }
-common-log = { path = "src/common/log" }
-common-macro = { path = "src/common/macro" }
-common-mem-prof = { path = "src/common/mem-prof" }
-common-telemetry = { path = "src/common/telemetry" }
-server-cmd = { path = "src/cmd" }
-server-core = { path = "src/core" }
-server-types = { path = "src/types" }
-server-utils = { path = "src/utils" }
-
-[workspace.dev-dependencies]
-# Benchmarks libs.
-criterion = "0.5.1"
-
-[workspace.build-dependencies]
-chrono = { version = "0.4.38", default-features = false, features = ["clock"] }
-
-[workspace.features]
-# Notice: Use optional dependencies to avoid slow automatic compilation during debugging
-# (because if rely on console-subscriber, need to enable RUSTFLAGS="--cfg tokio_unstable" which
-# will invalidate the compile-time cache).
-tokio-console = ["console-subscriber"]
-profiling = ["dep:pyroscope", "dep:pyroscope_pprofrs"]
-
-[[workspace.bin]]
-name = "mywebnote"
-path = "src/main.rs"

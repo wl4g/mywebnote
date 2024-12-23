@@ -8,6 +8,6 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-criterion = "0.5.1"
-regex.workspace = true
-globset.workspace = true
+indicatif = "0.17.1"
+clap.workspace = true
+tokio.workspace = true

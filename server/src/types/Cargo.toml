@@ -8,9 +8,9 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-# This Project Sub Modules.
+# Project sub-modules.
 server-utils.workspace = true
-common-makestruct = { path = "../common/makestruct" }
+common-makestruct.workspace = true
 # ThirdParty Libraries.
 serde.workspace = true
 serde_json.workspace = true

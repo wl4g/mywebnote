@@ -18,5 +18,10 @@
 // covered by this license must also be released under the GNU GPL license.
 // This includes modifications and derived works.
 
-pub mod health;
-pub mod apm;
+use criterion::criterion_main;
+
+mod path_matching;
+
+criterion_main! {
+    path_matching::benches
+}

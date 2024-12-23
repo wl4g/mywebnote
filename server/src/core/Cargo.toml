@@ -8,8 +8,8 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-# This Project Sub Modules.
-common-log.workspace = true
+# Project sub-modules.
+common-audit-log.workspace = true
 server-utils.workspace = true
 server-types.workspace = true
 # Specifical libraries.
@@ -104,6 +104,13 @@ redis = { version = "0.25.4", features = ["tokio-comp", "cluster-async"] }
 # Ethers libs.
 ethers = { version = "2.0.14", features = ["abigen", "ws", "rustls"] }
 eyre.workspace = true
+
+[dev-dependencies]
+criterion = "0.4"
+
+[[bench]]
+name = "bench_main"
+harness = false
 
 [build-dependencies]
 chrono = { version = "0.4.38", default-features = false, features = ["clock"] }
