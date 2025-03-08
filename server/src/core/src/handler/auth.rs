@@ -11,7 +11,7 @@ use tower_cookies::cookie::{ time::Duration, CookieBuilder, SameSite };
 
 use ethers::types::{ Address, Signature };
 
-use crate::{ config::config_serve::WebServeConfig, context::state::AppState };
+use crate::{ config::config::AppConfig, context::state::AppState };
 use server_types::{
     auth::{
         EthersWalletLoginRequest,
@@ -64,7 +64,7 @@ pub trait IAuthHandler: Send {
 
     async fn handle_login_success(
         &self,
-        config: &Arc<WebServeConfig>,
+        config: &Arc<AppConfig>,
         ptype: PrincipalType,
         uid: i64,
         uname: &str,
@@ -437,7 +437,7 @@ impl<'a> IAuthHandler for AuthHandler<'a> {
 
     async fn handle_login_success(
         &self,
-        config: &Arc<WebServeConfig>,
+        config: &Arc<AppConfig>,
         ptype: PrincipalType,
         uid: i64,
         uname: &str,

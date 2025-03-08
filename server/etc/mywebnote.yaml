@@ -36,7 +36,7 @@ logging:
   level: DEBUG
 
 db:
-  type: Mongo # Mongo|SQLite
+  type: SQLite # Mongo|SQLite
   sqlite:
     dir: /tmp/mywebnote/
   mongo:
@@ -52,8 +52,8 @@ cache:
     eviction-policy: LRU
   redis:
     nodes: ["redis://127.0.0.1:6379"]
-    #username: "" # eg: "default"
-    #password: "" # eg: "bitnami"
+    #username: "<YOUR_REDIS_USERNAME>" # eg: "default"
+    #password: "<YOUR_REDIS_PASSWORD>" # eg: "bitnami", refer to: .env
     connection-timeout: 3000
     response-timeout: 6000
     retries: 1
@@ -66,7 +66,7 @@ auth:
   jwt-rk-name: "_rk"
   jwt-validity-ak: 3600000
   jwt-validity-rk: 86400000
-  jwt-secret: "changeit"
+  #jwt-secret: "<YOUR_JWT_SECRET>" # Refer to: .env
   anonymous-paths:
     - "/_/healthz"
     - "/_/healthz/**"
@@ -77,8 +77,8 @@ auth:
     - "/static/**"
   oidc:
     enabled: true
-    client-id: "mywebnote-wl4g"
-    client-secret: "ZySKr09pTaG5xpyfPI28ARMp4MV3GXxB"
+    #client-id: "<YOUR_OIDC_CLIENT_ID>" # Refer to: .env
+    #client-secret: "<YOUR_OIDC_CLIENT_SECRET>" # Refer to: .env
     issue-url: "https://iam.wl4g.com/realms/master"
     #redirect-url: "http://localhost:8888/serve/auth/callback/oidc"
     redirect-url: "http://wl4g.local:10000/serve/auth/callback/oidc"
@@ -87,8 +87,8 @@ auth:
   # see:https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps
   github:
     enabled: true
-    client-id: "Ov23li21SkhoBFIQaGPD"
-    client-secret: "374b9761778707170e6538932974ea940b45972f"
+    #client-id: "<YOUR_GITHUB_CLIENT_ID>" # Refer to: .env
+    #client-secret: "<YOUR_GITHUB_CLIENT_SECRET>" # Refer to: .env
     auth-url: "https://github.com/login/oauth/authorize"
     token-url: "https://github.com/login/oauth/access_token"
     #redirect-url: "http://localhost:8888/serve/auth/callback/github"

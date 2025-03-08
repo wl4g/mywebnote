@@ -23,7 +23,7 @@ use std::sync::Arc;
 use lazy_static::lazy_static;
 use prometheus::{ Registry, Counter, Histogram, Encoder, TextEncoder };
 
-use crate::config::config_serve::WebServeConfig;
+use crate::config::config::AppConfig;
 
 lazy_static! {
     pub static ref REGISTRY: Registry = Registry::new();
@@ -51,7 +51,7 @@ pub async fn handle_metrics() -> String {
 }
 
 #[allow(unused)]
-pub async fn init_metrics(config: &Arc<WebServeConfig>) {
+pub async fn init_metrics(config: &Arc<AppConfig>) {
     if config.mgmt.enabled {
         tracing::info!("Custom metrics starting ...");
         REGISTRY.register(Box::new(MY_HTTP_REQUESTS_TOTAL.clone())).expect(

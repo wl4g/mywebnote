@@ -33,6 +33,7 @@ strum = { version = "0.25", features = ["derive"] }
 mimalloc = { version = "0.1.43", default-features = false }
 local-ip-address.workspace = true
 # Command line libs.
+dotenv = "0.15.0"
 clap.workspace = true
 # Serialization libs.
 serde = { version = "1.0.197", features = ["derive"] }

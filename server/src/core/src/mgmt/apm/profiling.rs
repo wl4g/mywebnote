@@ -20,12 +20,12 @@
 
 use std::sync::Arc;
 
-use crate::config::config_serve::WebServeConfig;
+use crate::config::config::AppConfig;
 #[cfg(feature = "profiling")]
-use crate::{ config::config_serve::GIT_VERSION, utils::inets };
+use crate::{ config::config::GIT_VERSION, utils::inets };
 
 #[allow(unused)]
-pub async fn init_profiling(config: &Arc<WebServeConfig>) {
+pub async fn init_profiling(config: &Arc<AppConfig>) {
     #[cfg(feature = "profiling")]
     let agent = if config.mgmt.enabled && config.mgmt.pyroscope.enabled {
         let mut tags = Vec::new();

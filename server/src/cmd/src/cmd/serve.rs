@@ -35,11 +35,11 @@ use axum::Router;
 use axum::routing::get;
 use axum_prometheus::PrometheusMetricLayer;
 
-use server_core::config::config_serve;
-use server_core::config::config_serve::WebServeConfig;
-use server_core::config::config_serve::GIT_BUILD_DATE;
-use server_core::config::config_serve::GIT_COMMIT_HASH;
-use server_core::config::config_serve::GIT_VERSION;
+use server_core::config::config;
+use server_core::config::config::AppConfig;
+use server_core::config::config::GIT_BUILD_DATE;
+use server_core::config::config::GIT_COMMIT_HASH;
+use server_core::config::config::GIT_VERSION;
 use server_core::config::swagger;
 use server_core::context::state::AppState;
 use server_core::mgmt::apm;
@@ -62,7 +62,7 @@ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
 #[allow(unused)]
 async fn start_mgmt_server(
-    config: &Arc<WebServeConfig>,
+    config: &Arc<AppConfig>,
     signal_sender: oneshot::Sender<()>
 ) -> JoinHandle<()> {
     let (prometheus_layer, _) = PrometheusMetricLayer::pair();
@@ -82,7 +82,7 @@ async fn start_mgmt_server(
     })
 }
 
-async fn start_server(config: &Arc<WebServeConfig>) {
+async fn start_server(config: &Arc<AppConfig>) {
     let app_state = AppState::new(&config).await;
     tracing::info!("Register Web server middlewares ...");
 
@@ -137,13 +137,26 @@ async fn start_server(config: &Arc<WebServeConfig>) {
 
     let bind_addr = &config.server.bind;
     tracing::info!("Starting web server on {}", bind_addr);
+    let listener = match TcpListener::bind(&bind_addr).await {
+        Ok(l) => {
+            tracing::info!("Web server is ready on {}", bind_addr);
+            l
+        }
+        Err(e) => {
+            tracing::error!("Failed to bind to {}: {}", bind_addr, e);
+            panic!("Failed to bind to {}: {}", bind_addr, e);
+        }
+    };
 
-    axum::serve(
-        TcpListener::bind(&bind_addr).await.unwrap(),
-        app_routes.into_make_service()
-    ).await.unwrap_or_else(|e| panic!("Error starting API server: {}", e));
-
-    tracing::info!("Web server is ready");
+    match axum::serve(listener, app_routes.into_make_service()).tcp_nodelay(true).await {
+        Ok(_) => {
+            tracing::info!("Web server shut down gracefully");
+        }
+        Err(e) => {
+            tracing::error!("Error running web server: {}", e);
+            panic!("Error starting API server: {}", e);
+        }
+    }
 }
 
 fn on_panic(info: &std::panic::PanicInfo) {
@@ -152,7 +165,7 @@ fn on_panic(info: &std::panic::PanicInfo) {
     eprintln!(":: Panic Error ::\n{}", info)
 }
 
-fn print_launch_resume(config: &Arc<WebServeConfig>, verbose: bool) {
+fn print_launch_resume(config: &Arc<AppConfig>, verbose: bool) {
     // http://www.network-science.de/ascii/#larry3d,graffiti,basic,drpepper,rounded,roman
     let ascii_name =
         r#"
@@ -172,7 +185,7 @@ fn print_launch_resume(config: &Arc<WebServeConfig>, verbose: bool) {
     eprintln!("                Package Version: {:?}", env!("CARGO_PKG_VERSION").to_string());
     eprintln!("                Git Commit Hash: {:?}", GIT_COMMIT_HASH);
     eprintln!("                 Git Build Date: {:?}", GIT_BUILD_DATE);
-    let path = env::var("APP_CFG_PATH").unwrap_or("none".to_string());
+    let path = env::var("MYWEBNOTE_CFG_PATH").unwrap_or("none".to_string());
     eprintln!("        Configuration file path: {:?}", path);
     eprintln!("            Web Serve listen on: \"{}://{}\"", "http", &config.server.bind);
     if config.mgmt.enabled {
@@ -221,7 +234,7 @@ pub async fn handle_cli(matches: &clap::ArgMatches) -> () {
 
     let verbose = matches.get_flag("verbose");
 
-    let config = config_serve::get_config();
+    let config = config::get_config();
 
     print_launch_resume(&config, verbose);
 

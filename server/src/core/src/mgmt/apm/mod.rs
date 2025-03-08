@@ -23,7 +23,7 @@ use std::sync::Arc;
 use tracing_opentelemetry::OpenTelemetryLayer;
 use tracing_subscriber::layer::SubscriberExt;
 
-use crate::config::config_serve::WebServeConfig;
+use crate::config::config::AppConfig;
 use crate::mgmt::apm::otel::create_otel_tracer;
 
 pub mod logging;
@@ -31,7 +31,7 @@ pub mod metrics;
 pub mod otel;
 pub mod profiling;
 
-pub async fn init_components(config: &Arc<WebServeConfig>) {
+pub async fn init_components(config: &Arc<AppConfig>) {
     // Setup logging+tracing layers.
     let (route_layer, _) = tracing_subscriber::reload::Layer::new(
         logging::default_log_route_layer()

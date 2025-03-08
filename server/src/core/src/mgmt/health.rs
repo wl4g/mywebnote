@@ -24,7 +24,7 @@ use axum::{ async_trait, extract::State, response::IntoResponse, routing::get, R
 use hyper::StatusCode;
 use serde::Serialize;
 
-use crate::{ config::config_serve::{ CacheProvider, DbType }, context::state::AppState };
+use crate::{ config::config::{ CacheProvider, DbType }, context::state::AppState };
 use server_types::{ user::User, PageRequest };
 
 pub(crate) const HEALTHZ_URI: &str = "/_/healthz";

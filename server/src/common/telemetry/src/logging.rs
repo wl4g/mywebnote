@@ -69,7 +69,7 @@ impl Eq for LoggingOptions {}
 impl Default for LoggingOptions {
     fn default() -> Self {
         Self {
-            dir: "/tmp/greptimedb/logs".to_string(),
+            dir: "/tmp/mywebnote/logs".to_string(),
             level: None,
             enable_otlp_tracing: false,
             otlp_endpoint: None,

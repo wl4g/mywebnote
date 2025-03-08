@@ -47,7 +47,7 @@ pub fn register_subcommand_handles() -> &'static HashMap<
 
 pub fn execute_commands_app() -> () {
     let mut app = Command::new("MyWebnote Rust Serve")
-        .version(server_core::config::config_serve::VERSION.as_str())
+        .version(server_core::config::config::VERSION.as_str())
         .author("James Wong")
         .about("MyWebnote Rust Serve")
         .arg_required_else_help(true); // When no args are provided, show help.

@@ -25,7 +25,7 @@ use utoipa::OpenApi;
 use utoipa::openapi::{ Paths, PathItem };
 use utoipa_swagger_ui::SwaggerUi;
 
-use super::config_serve::{ self, WebServeConfig };
+use super::config::{ self, AppConfig };
 use crate::{
     route::{
         api_v1::users::{
@@ -277,7 +277,7 @@ struct ApiPathPrefixer;
 
 impl utoipa::Modify for ApiPathPrefixer {
     fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
-        let ctx_path = &config_serve::get_config().server.context_path;
+        let ctx_path = &config::get_config().server.context_path;
 
         let old_paths = std::mem::take(&mut openapi.paths);
         let mut new_paths_map: BTreeMap<String, PathItem> = old_paths.paths
@@ -298,7 +298,7 @@ impl utoipa::Modify for ApiPathPrefixer {
     }
 }
 
-pub fn init_swagger(config: &Arc<WebServeConfig>) -> SwaggerUi {
+pub fn init_swagger(config: &Arc<AppConfig>) -> SwaggerUi {
     // Manual build of OpenAPI.
     // use utoipa::openapi::{ ContactBuilder, InfoBuilder, LicenseBuilder, Paths };
     // let info = InfoBuilder::new()

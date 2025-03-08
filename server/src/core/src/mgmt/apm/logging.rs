@@ -25,7 +25,7 @@ use tracing_subscriber::{ filter::Targets, EnvFilter, Layer };
 
 use serde::{ Deserialize, Serialize };
 
-use crate::config::config_serve::WebServeConfig;
+use crate::config::config::AppConfig;
 
 pub type LogRouteHandle = tracing_subscriber::reload::Handle<
     LogRouteType,
@@ -149,7 +149,7 @@ pub(super) fn default_log_route_layer() -> LogRouteType {
     None.with_filter(tracing_subscriber::filter::Targets::new().with_target("", LevelFilter::OFF))
 }
 
-pub(super) fn default_log_stderr_layer(config: &Arc<WebServeConfig>) -> LogStderrType {
+pub(super) fn default_log_stderr_layer(config: &Arc<AppConfig>) -> LogStderrType {
     let layer = tracing_subscriber::fmt
         ::layer()
         .with_writer(|| LineWriter::new(std::io::stderr()))

@@ -33,7 +33,7 @@ pub mod users_mongo;
 use anyhow::Error;
 use axum::async_trait;
 
-use crate::config::config_serve::{ WebServeProperties, DbType };
+use crate::config::config::{ AppConfigProperties, DbType };
 use server_types::{ PageResponse, PageRequest };
 
 #[async_trait] // solution2: async fn + dyn polymorphism problem.
@@ -73,7 +73,7 @@ impl<T> RepositoryContainer<T> where T: 'static + Send + Sync {
         &*self.mongo_repo
     }
 
-    pub fn get(/*&mut self*/ &self, config: &WebServeProperties) -> &dyn AsyncRepository<T> {
+    pub fn get(/*&mut self*/ &self, config: &AppConfigProperties) -> &dyn AsyncRepository<T> {
         match config.db.db_type {
             DbType::Sqlite => self.sqlite_repo(),
             DbType::Mongo => self.mongo_repo(),

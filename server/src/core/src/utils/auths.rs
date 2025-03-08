@@ -29,7 +29,7 @@ use serde::{ Deserialize, Serialize };
 use tower_cookies::cookie::Cookie;
 use tokio::sync::RwLock;
 
-use crate::{ config::config_serve::WebServeConfig, handler::auth::PrincipalType };
+use crate::{ config::config::AppConfig, handler::auth::PrincipalType };
 use server_types::auth::{ LoggedResponse, TokenWrapper };
 use server_utils::webs;
 
@@ -51,7 +51,7 @@ pub struct AuthUserClaims {
 }
 
 pub fn create_jwt(
-    config: &Arc<WebServeConfig>,
+    config: &Arc<AppConfig>,
     ptype: &PrincipalType,
     uid: i64,
     uname: &str,
@@ -89,7 +89,7 @@ pub fn create_jwt(
 }
 
 pub fn validate_jwt(
-    config: &Arc<WebServeConfig>,
+    config: &Arc<AppConfig>,
     token: &str
 ) -> Result<AuthUserClaims, jsonwebtoken::errors::Error> {
     let validation = Validation::default();
@@ -102,7 +102,7 @@ pub fn validate_jwt(
 }
 
 pub fn auth_resp_redirect_or_json(
-    config: &Arc<WebServeConfig>,
+    config: &Arc<AppConfig>,
     headers: &HeaderMap,
     redirect_url: &str,
     status: StatusCode,
@@ -164,7 +164,7 @@ pub fn clean_context_path<'a>(ctx_path: &'a Option<String>, path: &'a str) -> &'
     }
 }
 
-pub fn join_context_path(config: &WebServeConfig, path: String) -> String {
+pub fn join_context_path(config: &AppConfig, path: String) -> String {
     // Absolute URI not needs to join context path.
     let schema = url::Url
         ::parse(path.as_str())

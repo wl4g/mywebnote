@@ -29,7 +29,7 @@ use moka::policy::EvictionPolicy;
 use moka::future::Cache;
 use regex::Regex;
 
-use crate::config::config_serve::MemoryProperties;
+use crate::config::config::MemoryProperties;
 
 use super::ICache;
 
@@ -269,7 +269,7 @@ impl ICache<String> for StringMemoryCache {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::config_serve::MemoryProperties;
+    use crate::config::config::MemoryProperties;
 
     fn create_test_cache() -> StringMemoryCache {
         let config = MemoryProperties {

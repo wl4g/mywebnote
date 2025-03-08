@@ -38,7 +38,8 @@
             },
             "env": {
                 "RUST_BACKTRACE": "full",
-                "APP_CFG_PATH": "${workspaceFolder}/etc/serve.yaml"
+                "MYWEBNOTE_CFG_PATH": "${workspaceFolder}/etc/mywebnote.yaml",
+                "MYWEBNOTE_CFG_VERBOSE": "true"
             },
             "args": [
                 "serve",
@@ -59,7 +60,8 @@
                 },
             },
             "env": {
-                "RUST_BACKTRACE": "full"
+                "RUST_BACKTRACE": "full",
+                "MYWEBNOTE_CFG_VERBOSE": "true"
             },
             "args": [
                 "serve"
@@ -88,7 +90,8 @@
             },
             "env": {
                 "RUST_BACKTRACE": "full",
-                "APP_CFG_PATH": "${workspaceFolder}/etc/serve.yaml"
+                "MYWEBNOTE_CFG_PATH": "${workspaceFolder}/etc/mywebnote.yaml",
+                "MYWEBNOTE_CFG_VERBOSE": "true"
             },
             "args": [
                 "serve",
@@ -116,7 +119,8 @@
                 }
             },
             "env": {
-                "RUST_BACKTRACE": "full"
+                "RUST_BACKTRACE": "full",
+                "MYWEBNOTE_CFG_VERBOSE": "true"
             },
             "args": [
                 "serve"

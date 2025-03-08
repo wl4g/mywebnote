@@ -21,7 +21,7 @@
 use anyhow::{ Error, Ok };
 use axum::async_trait;
 
-use crate::config::config_serve::DbProperties;
+use crate::config::config::DbProperties;
 use server_types::document::Document;
 use server_types::PageRequest;
 use server_types::PageResponse;

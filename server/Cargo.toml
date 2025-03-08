@@ -38,7 +38,7 @@ resolver = "2"
 version = "0.1.0"
 edition = "2021"
 authors = ["James Wong"]
-description = "A simple generic of web note server."
+description = "Generic Web Note Server of Personal."
 documentation = "https://github.com/wl4g/my-webnote"
 license = "GPL-3.0"
 

@@ -20,7 +20,7 @@
 
 use oauth2::{ basic::BasicClient, AuthUrl, ClientId, ClientSecret, RedirectUrl, TokenUrl };
 
-use crate::config::config_serve::OAuth2Properties;
+use crate::config::config::OAuth2Properties;
 
 // Using unified abstraction as OAuth2Config base class.
 pub async fn create_oauth2_client(oauth2_config: &OAuth2Properties) -> Option<BasicClient> {

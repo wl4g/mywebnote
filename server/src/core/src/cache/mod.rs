@@ -23,7 +23,7 @@ use std::collections::HashMap;
 use anyhow::Error;
 use axum::async_trait;
 
-use crate::config::config_serve::{ WebServeProperties, CacheProvider };
+use crate::config::config::{ AppConfigProperties, CacheProvider };
 
 pub mod memory;
 pub mod redis;
@@ -86,7 +86,7 @@ impl<T> CacheContainer<T> where T: 'static + Send + Sync {
         &*self.redis_cache
     }
 
-    pub fn get(&self, config: &WebServeProperties) -> &dyn ICache<T> {
+    pub fn get(&self, config: &AppConfigProperties) -> &dyn ICache<T> {
         match config.cache.provider {
             CacheProvider::Memory => self.memory_cache(),
             CacheProvider::Redis => self.redis_cache(),

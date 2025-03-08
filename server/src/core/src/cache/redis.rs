@@ -27,7 +27,7 @@ use redis::{
 };
 use std::{ collections::HashMap, sync::Arc, time::Duration };
 
-use crate::config::config_serve::RedisProperties;
+use crate::config::config::RedisProperties;
 
 use super::ICache;
 

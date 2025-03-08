@@ -22,6 +22,7 @@ use std::{ env, ops::Deref, sync::Arc, time::Duration };
 
 use anyhow::Ok;
 use arc_swap::ArcSwap;
+use dotenv::dotenv;
 use globset::{ Glob, GlobSet, GlobSetBuilder };
 use once_cell::sync::Lazy;
 use serde::{ Deserialize, Serialize };
@@ -57,10 +58,11 @@ lazy_static! {
 
 // Global the single refreshable configuration instance.
 // see: https://github.com/wl4g-collect/openobserve/blob/v0.10.9/src/config/src/config.rs#L186
-static CONFIG: Lazy<ArcSwap<WebServeConfig>> = Lazy::new(|| ArcSwap::from(init()));
+static CONFIG: Lazy<ArcSwap<AppConfig>> = Lazy::new(|| ArcSwap::from(init()));
 
 #[derive(Debug, Serialize, Deserialize, Clone, Validate)]
-pub struct WebServeProperties {
+#[serde(rename_all = "kebab-case")]
+pub struct AppConfigProperties {
     #[serde(rename = "service-name")]
     #[validate(length(min = 1, max = 32))]
     pub service_name: String,
@@ -190,7 +192,9 @@ pub struct AuthProperties {
     pub jwt_secret: Option<String>,
     #[serde(rename = "anonymous-paths")]
     pub anonymous_paths: Option<Vec<String>>,
+    #[serde(rename = "oidc")]
     pub oidc: OidcProperties,
+    #[serde(rename = "github")]
     pub github: GithubProperties,
     #[serde(rename = "login-url")]
     pub login_url: Option<String>,
@@ -315,10 +319,10 @@ pub struct WebNoteProperties {
     pub indexeddb_store_names: Vec<String>,
 }
 
-impl WebServeProperties {
-    pub fn default() -> WebServeProperties {
-        WebServeProperties {
-            service_name: String::from("the-mywebnote"),
+impl AppConfigProperties {
+    pub fn default() -> AppConfigProperties {
+        AppConfigProperties {
+            service_name: String::from("myapp"),
             server: ServerProperties::default(),
             logging: LoggingProperties::default(),
             db: DbProperties::default(),
@@ -330,25 +334,35 @@ impl WebServeProperties {
         }
     }
 
-    pub fn validate(self) -> Result<WebServeProperties, anyhow::Error> {
+    pub fn validate(self) -> Result<AppConfigProperties, anyhow::Error> {
         //self.validate();
         Ok(self)
     }
 
-    pub fn to_config(&self) -> Arc<WebServeConfig> {
-        WebServeConfig::new(&self)
+    pub fn to_config(&self) -> Arc<AppConfig> {
+        AppConfig::new(&self)
     }
 
     // see:https://github.com/mehcode/config-rs/blob/master/examples/simple/main.rs
-    pub fn parse(path: &str) -> WebServeProperties {
-        // serde_yaml::from_str(&contents)?;
+    pub fn parse(path: &str) -> AppConfigProperties {
+        dotenv::dotenv().ok();
 
+        // serde_yaml::from_str(&contents)?;
         let config = Config::builder()
             .add_source(config::File::with_name(path))
-            .add_source(config::Environment::with_prefix("MYWEBNOTE"))
+            .add_source(
+                // Extrat candidate from env refer to: https://github.com/rust-cli/config-rs/blob/v0.15.9/src/env.rs#L290
+                // Set up into hierarchy struct attibutes refer to:https://github.com/rust-cli/config-rs/blob/v0.15.9/src/source.rs#L24
+                config::Environment
+                    ::with_prefix("MYWEBNOTE")
+                    // Notice: Use double "_" to distinguish between different hierarchy struct or attribute alies at the same level.
+                    .separator("__")
+                    .convert_case(config::Case::Cobol)
+                    .keep_prefix(false) // Remove the prefix when matching.
+            )
             .build()
             .unwrap_or_else(|err| panic!("Error parsing config: {}", err))
-            .try_deserialize::<WebServeProperties>()
+            .try_deserialize::<AppConfigProperties>()
             .unwrap_or_else(|err| panic!("Error deserialize config: {}", err));
 
         config
@@ -570,22 +584,23 @@ impl Default for OtelProperties {
     }
 }
 
-pub struct WebServeConfig {
-    pub inner: WebServeProperties,
+#[derive(Debug)]
+pub struct AppConfig {
+    pub inner: AppConfigProperties,
     pub auth_jwt_ak_name: String,
     pub auth_jwt_rk_name: String,
     pub auth_anonymous_glob_matcher: Option<GlobSet>,
 }
 
-impl Deref for WebServeConfig {
-    type Target = WebServeProperties;
+impl Deref for AppConfig {
+    type Target = AppConfigProperties;
     fn deref(&self) -> &Self::Target {
         &self.inner
     }
 }
 
-impl WebServeConfig {
-    pub fn new(config: &WebServeProperties) -> Arc<WebServeConfig> {
+impl AppConfig {
+    pub fn new(config: &AppConfigProperties) -> Arc<AppConfig> {
         // Build to auth anonymous glob matcher.
         let globset;
         if config.auth.anonymous_paths.is_some() {
@@ -607,7 +622,7 @@ impl WebServeConfig {
             globset = Some(builder.build().unwrap());
         }
 
-        Arc::new(WebServeConfig {
+        Arc::new(AppConfig {
             inner: config.clone(),
             auth_jwt_ak_name: config.auth.jwt_ak_name
                 .to_owned()
@@ -637,18 +652,24 @@ impl Default for WebNoteProperties {
 }
 
 #[allow(unused)]
-fn init() -> Arc<WebServeConfig> {
-    env::var("APP_CFG_PATH")
+fn init() -> Arc<AppConfig> {
+    let config = env
+        ::var("MYWEBNOTE_CFG_PATH")
         .map(|path| {
-            WebServeProperties::parse(path.as_str())
+            AppConfigProperties::parse(path.as_str())
                 .validate()
                 .expect("Failed to validate configuration.")
                 .to_config()
         })
-        .unwrap_or(WebServeProperties::default().to_config())
+        .unwrap_or(AppConfigProperties::default().to_config());
+
+    if env::var("MYWEBNOTE_CFG_VERBOSE").is_ok() || env::var("VERBOSE").is_ok() {
+        println!("Loaded the configuration: {}", serde_json::to_string(&config.inner).unwrap());
+    }
+    return config;
 }
 
-pub fn get_config() -> Arc<WebServeConfig> {
+pub fn get_config() -> Arc<AppConfig> {
     CONFIG.load().clone()
 }
 

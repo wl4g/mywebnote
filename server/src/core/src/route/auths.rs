@@ -42,7 +42,7 @@ use openidconnect::{
 use tower_cookies::{ cookie::{ time::{ self, Duration }, CookieBuilder }, CookieManagerLayer };
 
 use crate::{
-    config::{ config_serve::DEFAULT_404_HTML, resources::handle_static },
+    config::{ config::DEFAULT_404_HTML, resources::handle_static },
     context::state::AppState,
     handler::auth::{ AuthHandler, IAuthHandler, PrincipalType },
 };

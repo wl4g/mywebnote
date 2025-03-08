@@ -30,7 +30,7 @@ use server_types::document::Document;
 use server_types::folder::Folder;
 use server_types::settings::Settings;
 use server_types::user::User;
-use crate::config::config_serve::WebServeConfig;
+use crate::config::config::AppConfig;
 use crate::store::{
     RepositoryContainer,
     documents_sqlite::DocumentSQLiteRepository,
@@ -46,7 +46,7 @@ use server_utils::httpclients;
 
 #[derive(Clone)]
 pub struct AppState {
-    pub config: Arc<WebServeConfig>,
+    pub config: Arc<AppConfig>,
     // The basic operators.
     pub string_cache: Arc<CacheContainer<String>>,
     pub oidc_client: Option<Arc<openidconnect::core::CoreClient>>,
@@ -64,7 +64,7 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub async fn new(config: &Arc<WebServeConfig>) -> AppState {
+    pub async fn new(config: &Arc<AppConfig>) -> AppState {
         let cache_config = &config.cache;
 
         // Build cacher.

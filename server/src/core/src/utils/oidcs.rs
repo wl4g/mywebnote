@@ -27,7 +27,7 @@ use openidconnect::{
     RedirectUrl,
 };
 
-use crate::config::config_serve::OidcProperties;
+use crate::config::config::OidcProperties;
 
 /*
 curl 'https://keycloak.example.com/realms/master/.well-known/openid-configuration'

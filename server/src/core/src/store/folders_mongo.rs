@@ -26,7 +26,7 @@ use axum::async_trait;
 use mongodb::Collection;
 use mongodb::bson::doc;
 
-use crate::config::config_serve::DbProperties;
+use crate::config::config::DbProperties;
 use server_types::folder::Folder;
 use server_types::{ PageRequest, PageResponse };
 use super::AsyncRepository;

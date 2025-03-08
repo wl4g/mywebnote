@@ -48,7 +48,7 @@ pub fn audit_log(attr: TokenStream, item: TokenStream) -> TokenStream {
     let block = &input.block;
     let content = &log_content.content.value();
 
-    println!("[Macro Biz Logger (like Java AOP)] - content: {}", content);
+    //println!("[Macro Biz Logger (like Java AOP)] - content: {:?}", content);
 
     let mut log_parts = Vec::new();
     let mut current_part = String::new();
@@ -92,7 +92,7 @@ pub fn audit_log(attr: TokenStream, item: TokenStream) -> TokenStream {
             }
         });
 
-    println!("[Macro Biz Logger (like Java AOP)] - log_format: {}", log_format);
+    //println!("[Macro Biz Logger (like Java AOP)] - log_format: {:?}", log_format);
 
     let result =
         quote! {
