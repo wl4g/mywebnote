@@ -28,12 +28,12 @@ FROM registry.cn-shenzhen.aliyuncs.com/wl4g/rust:1.85 as base
 # the default source of debian-12 and only supports libmodsecurity-3.0.9.
 #
 RUN echo > /etc/apt/sources.list && \
-    echo 'deb http://mirrors.cloud.aliyuncs.com/debian bookworm main contrib non-free non-free-firmware' > /etc/apt/sources.list && \
-    echo 'deb-src http://mirrors.cloud.aliyuncs.com/debian bookworm main contrib non-free non-free-firmware' >> /etc/apt/sources.list && \
-    echo 'deb http://mirrors.cloud.aliyuncs.com/debian-security bookworm-security main contrib non-free non-free-firmware' >> /etc/apt/sources.list && \
-    echo 'deb-src http://mirrors.cloud.aliyuncs.com/debian-security bookworm-security main contrib non-free non-free-firmware' >> /etc/apt/sources.list && \
-    echo 'deb http://mirrors.cloud.aliyuncs.com/debian bookworm-updates main contrib non-free non-free-firmware' >> /etc/apt/sources.list && \
-    echo 'deb-src http://mirrors.cloud.aliyuncs.com/debian bookworm-updates main contrib non-free non-free-firmware' >> /etc/apt/sources.list && \
+    echo 'deb http://mirrors.aliyun.com/debian bookworm main contrib non-free non-free-firmware' > /etc/apt/sources.list && \
+    echo 'deb-src http://mirrors.aliyun.com/debian bookworm main contrib non-free non-free-firmware' >> /etc/apt/sources.list && \
+    echo 'deb http://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware' >> /etc/apt/sources.list && \
+    echo 'deb-src http://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware' >> /etc/apt/sources.list && \
+    echo 'deb http://mirrors.aliyun.com/debian bookworm-updates main contrib non-free non-free-firmware' >> /etc/apt/sources.list && \
+    echo 'deb-src http://mirrors.aliyun.com/debian bookworm-updates main contrib non-free non-free-firmware' >> /etc/apt/sources.list && \
     apt-get update && \
     apt-get install -y pkg-config && \
     apt-get clean && \
@@ -64,9 +64,9 @@ RUN cargo install --path .
 ### Stage 4: Application runtime. ###
 FROM registry.cn-shenzhen.aliyuncs.com/wl4g/debian:bookworm
 # Set up fast apt sources. (internal: http://mirrors.cloud.aliyuncs.com, external: http://mirrors.aliyun.com)
-RUN echo 'deb http://mirrors.cloud.aliyuncs.com/debian bookworm main contrib non-free non-free-firmware' > /etc/apt/sources.list && \
-    echo 'deb http://mirrors.cloud.aliyuncs.com/debian-security bookworm-security main contrib non-free non-free-firmware' >> /etc/apt/sources.list && \
-    echo 'deb http://mirrors.cloud.aliyuncs.com/debian bookworm-updates main contrib non-free non-free-firmware' >> /etc/apt/sources.list && \
+RUN echo 'deb http://mirrors.aliyun.com/debian bookworm main contrib non-free non-free-firmware' > /etc/apt/sources.list && \
+    echo 'deb http://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware' >> /etc/apt/sources.list && \
+    echo 'deb http://mirrors.aliyun.com/debian bookworm-updates main contrib non-free non-free-firmware' >> /etc/apt/sources.list && \
     apt-get update && \
     apt-get install -y libssl3 && \
     apt-get clean && \
