@@ -22,7 +22,6 @@
 members = [
     "benchmarks",
     "src/common/audit-log",
-    "src/common/error",
     "src/common/macro",
     "src/common/makestruct",
     "src/common/mem-prof",
@@ -60,10 +59,10 @@ server-cmd = { path = "src/cmd" }
 server-core = { path = "src/core" }
 server-types = { path = "src/types" }
 server-utils = { path = "src/utils" }
-# Lang libs.
+# Lang libs
 regex = "1.10.3"
-chrono = { version = "0.4.38", features = ["serde"] }
-uuid = { version = "1.9.1", default-features = false, features = ["v4"] }
+chrono = "0.4.38"
+uuid = "1.9.1"
 thiserror = "1.0.61"
 anyhow = "1.0.86"
 arc-swap = "1.7.1"
@@ -71,92 +70,75 @@ once_cell = "1.19.0"
 sysinfo = "0.29.11"
 base64 = "0.22.1"
 hex = "0.4.3"
-snafu = "0.7.5" # human process error lib.
-strum = { version = "0.25", features = ["derive"] }
-#rand = "0.8.5"
-# syrette = "0.5.1"
-mimalloc = { version = "0.1.43", default-features = false }
+snafu = "0.8.5"
+strum = "0.25"
+mimalloc = "0.1.43"
 local-ip-address = "0.6.1"
-#
-# Config libs.
+# Config libs
 config = "0.14.0"
-#
-# Command line libs.
+dotenv = "0.15.0"
+# Command line libs
 clap = "4.5.7"
-# Serialization libs.
-serde = { version = "1.0.197", features = ["derive"] }
+# Serialization libs
+serde = "1.0.197"
 serde_json = "1.0.64"
 serde_yaml = "0.9.32"
-validator = { version = "0.18.1", features = ["derive"] }
-#
-# Logger libs.
+validator = "0.18.1"
+# Logger libs
 env_logger = "0.11.3"
 log = "0.4.22"
-#
-# Prometheus libs.
+# Prometheus libs
 lazy_static = "1.4.0"
 prometheus = "0.13.4"
 axum-prometheus = "0.6.1"
-#
-# Tracing libs.
+# Tracing libs
 tracing = "0.1.40"
-tracing-subscriber = { version = "0.3.18", features = ["json", "env-filter"] }
+tracing-subscriber = "0.3.18"
 tracing-opentelemetry = "0.24.0"
 tracing-futures = "0.2"
 tracing-attributes = "0.1.26"
-opentelemetry = { version = "0.23.0" }
-opentelemetry_sdk = { version = "0.23.0", features = ["rt-tokio"] }
-opentelemetry-otlp = { version = "0.16.0", features = ["grpc-tonic"] }
-opentelemetry-http = { version = "0.12.0" }
-#opentelemetry-semantic-conventions = "0.13.0"
-#
-# Async core libs.
-tokio = { version = "1.38.0", features = ["full", "tracing"] }
-# Async core trait polymorphism libs.
+opentelemetry = "0.23.0"
+opentelemetry_sdk = "0.23.0"
+opentelemetry-otlp = "0.16.0"
+opentelemetry-http = "0.12.0"
+# Async core libs
+tokio = "1.38.0"
 async-trait = "0.1.81"
-#
-# Web HTTP libs.
-axum = { version = "0.7.5" }
-hyper = { version = "1.3.1", features = ["full"] }
+# Web HTTP libs
+axum = "0.7.5"
+hyper = "1.3.1"
 tower = "0.4.1"
-tower-http = { version = "0.5.2", features = ["trace", "auth"] }
+tower-http = "0.5.2"
 tower-cookies = "0.10.0"
-globset = "0.4.14" # ant glob path patterns
-#user_agent = "0.11.0"
+globset = "0.4.14"
 rust-embed = "8.5.0"
 mime_guess = "2.0.4"
-#include_dir = "0.7.3"
-#
-# Database libs.
+# Database libs
 mongodb = "3.0.1"
 futures = "0.3"
-sqlx = { version = "0.7.4", features = [
-    "runtime-tokio-rustls",
-    # "runtime-async-std",
-    "sqlite",
-    "macros",
-    "chrono"
-] }
-idb = { version = "0.6.3", features = ["builder", "doc", "futures", "tokio"] }
+sqlx = "0.7.4"
+idb = "0.6.4"
 serde-wasm-bindgen = "0.6.5"
 wasm-bindgen = "0.2.93"
-# Swagger libs.
-utoipa = { version = "4.2.3", features = ["axum_extras"] }
-utoipa-swagger-ui = { version = "7.1.0", features = ["axum"] }
+# Swagger libs
+utoipa = "4.2.3"
+utoipa-swagger-ui = "7.1.0"
 mac_address = "1.1.7"
-# Auth libs.
-reqwest = { version = "0.12.5", features = ["json"] }
+# Auth libs
+reqwest = "0.12.5"
 url = "2.3"
 oauth2 = "4.3"
 openidconnect = "3.5.0"
 jsonwebtoken = "9.3.0"
-# Encrypt libs.
+# Encrypt libs
 openssl = "0.10.64"
 rsa = "0.9.6"
 sha2 = "0.10.8"
-# Cache libs.
-moka = { version = "0.12.8", features = ["future"] }
-redis = { version = "0.25.4", features = ["tokio-comp", "cluster-async"] }
-# Ethers libs.
-ethers = { version = "2.0.14", features = ["abigen", "ws", "rustls"] }
+# Cache libs
+moka = "0.12.8"
+redis = "0.25.4"
+# Ethers libs
+ethers = "2.0.14"
 eyre = "0.6.12"
+# Build dependencies
+criterion = "0.4"

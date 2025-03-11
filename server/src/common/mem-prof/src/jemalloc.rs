@@ -43,6 +43,7 @@ pub async fn dump_profile() -> Result<Vec<u8>> {
     let tmp_path = tempfile::tempdir().map_err(|_| {
         (BuildTempPathSnafu {
             path: std::env::temp_dir(),
+            location: todo!(),
         }).build()
     })?;
 
@@ -51,11 +52,11 @@ pub async fn dump_profile() -> Result<Vec<u8>> {
 
     let path = path_buf
         .to_str()
-        .ok_or_else(|| (BuildTempPathSnafu { path: &path_buf }).build())?
+        .ok_or_else(|| (BuildTempPathSnafu { path: &path_buf, location: todo!() }).build())?
         .to_string();
 
     let mut bytes = CString::new(path.as_str())
-        .map_err(|_| (BuildTempPathSnafu { path: &path_buf }).build())?
+        .map_err(|_| (BuildTempPathSnafu { path: &path_buf, location: todo!() }).build())?
         .into_bytes_with_nul();
 
     {

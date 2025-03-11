@@ -27,7 +27,6 @@ mod panic_hook;
 pub mod tracing_context;
 mod tracing_sampler;
 
-pub use logging::{ init_default_ut_logging, init_global_logging };
-// pub use metric::dump_metrics;
+pub use logging::init_global_logging;
 pub use panic_hook::set_panic_hook;
 pub use ::{ common_error, tracing };

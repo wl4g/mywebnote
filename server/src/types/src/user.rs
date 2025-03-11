@@ -19,7 +19,6 @@
 // This includes modifications and derived works.
 
 use common_makestruct::MakeStructWith;
-// use common_smartcpy::SmartCopy; // TODO: compile error
 use sqlx::{ FromRow, sqlite::SqliteRow, Row };
 use serde::{ Deserialize, Serialize };
 use validator::Validate;
@@ -185,7 +184,6 @@ impl QueryUserResponse {
     Validate,
     utoipa::ToSchema,
     MakeStructWith
-    // SmartCopy
 )]
 #[excludes(id)]
 // #[smart_copy(target = "SaveUserRequestWith")]
