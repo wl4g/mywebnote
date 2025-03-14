@@ -19,9 +19,7 @@
 // This includes modifications and derived works.
 
 use std::env;
-use std::sync::{ Arc, Mutex, Once };
 
-use once_cell::sync::Lazy;
 use opentelemetry::{ global, KeyValue };
 use opentelemetry_otlp::WithExportConfig;
 use opentelemetry_sdk::propagation::TraceContextPropagator;

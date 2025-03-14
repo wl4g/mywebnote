@@ -13,9 +13,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use std::{ io::Result, process::Command };
+use std::{io::Result, process::Command};
 
-use chrono::{ DateTime, SecondsFormat, Utc };
+use chrono::{DateTime, SecondsFormat, Utc};
 
 fn main() -> Result<()> {
     println!("cargo:rerun-if-changed=build.rs");
@@ -23,6 +23,13 @@ fn main() -> Result<()> {
     // build information
     let output = Command::new("git").args(["describe", "--tags", "--abbrev=0"]).output().unwrap();
     let git_tag = String::from_utf8(output.stdout).unwrap();
+    // If there is no tag, use the branch name.
+    let git_tag = if git_tag.is_empty() {
+        let output = Command::new("git").args(["rev-parse", "--abbrev-ref", "HEAD"]).output().unwrap();
+        String::from_utf8(output.stdout).unwrap()
+    } else {
+        git_tag
+    };
     println!("cargo:rustc-env=GIT_VERSION={git_tag}");
 
     let output = Command::new("git").args(["rev-parse", "HEAD"]).output().unwrap();

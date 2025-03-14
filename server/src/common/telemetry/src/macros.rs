@@ -222,9 +222,17 @@ macro_rules! trace {
 
 #[cfg(test)]
 mod tests {
-    use common_error::mock::MockError;
-    use common_error::status_code::StatusCode;
+    use std::{
+        env,
+        sync::{Arc, Mutex, Once},
+    };
+
+    use common_error::{mock::MockError, status_code::StatusCode};
+    use once_cell::sync::Lazy;
     use tracing::Level;
+    use tracing_appender::non_blocking::WorkerGuard;
+
+    use crate::logging::{self, LoggingOptions};
 
     macro_rules! all_log_macros {
         ($($arg:tt)*) => {
@@ -236,9 +244,7 @@ mod tests {
         };
     }
 
-    static GLOBAL_UT_LOG_GUARD: Lazy<Arc<Mutex<Option<Vec<WorkerGuard>>>>> = Lazy::new(||
-        Arc::new(Mutex::new(None))
-    );
+    static GLOBAL_UT_LOG_GUARD: Lazy<Arc<Mutex<Option<Vec<WorkerGuard>>>>> = Lazy::new(|| Arc::new(Mutex::new(None)));
 
     /// Init tracing for unittest. Write logs to file `unittest`.
     fn init_default_ut_logging() {
@@ -251,21 +257,16 @@ mod tests {
             // than "/tmp".
             // This is to fix the problem that the "/tmp" disk space of action runner's is small,
             // if we write testing logs in it, actions would fail due to disk out of space error.
-            let dir = env
-                ::var("UNITTEST_LOG_DIR")
-                .unwrap_or_else(|_| "/tmp/__unittest_logs".to_string());
+            let dir = env::var("UNITTEST_LOG_DIR").unwrap_or_else(|_| "/tmp/__unittest_logs".to_string());
 
-            let level = env
-                ::var("UNITTEST_LOG_LEVEL")
-                .unwrap_or_else(|_|
-                    "debug,hyper=warn,tower=warn,datafusion=warn,reqwest=warn,sqlparser=warn,h2=info,opendal=info".to_string()
-                );
+            let level = env::var("UNITTEST_LOG_LEVEL")
+                .unwrap_or_else(|_| "debug,hyper=warn,tower=warn,datafusion=warn,reqwest=warn,sqlparser=warn,h2=info,opendal=info".to_string());
             let opts = LoggingOptions {
                 dir: dir.clone(),
                 level: Some(level),
                 ..Default::default()
             };
-            *g = Some(init_global_logging("unittest", &opts, TracingOptions::default(), None));
+            *g = Some(logging::init_global_logging("unittest", &opts, logging::TracingOptions::default(), None));
 
             crate::info!("logs dir = {}", dir);
         });

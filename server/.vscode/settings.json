@@ -4,5 +4,9 @@
     },
     "rust-analyzer.cargo.extraEnv": {
         "RUSTUP_TOOLCHAIN": "nightly"
-    }
+    },
+    "[rust]": {
+        "editor.defaultFormatter": "statiolake.vscode-rustfmt",
+        "editor.formatOnSave": false
+    },
 }

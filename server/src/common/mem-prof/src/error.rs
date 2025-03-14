@@ -1,27 +1,23 @@
-// SPDX-License-Identifier: GNU GENERAL PUBLIC LICENSE Version 3
+// Copyright 2023 Greptime Team
 //
-// Copyleft (c) 2024 James Wong. This file is part of James Wong.
-// is free software: you can redistribute it and/or modify it under
-// the terms of the GNU General Public License as published by the
-// Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-// James Wong is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
-// You should have received a copy of the GNU General Public License
-// along with James Wong.  If not, see <https://www.gnu.org/licenses/>.
-//
-// IMPORTANT: Any software that fully or partially contains or uses materials
-// covered by this license must also be released under the GNU GPL license.
-// This includes modifications and derived works.
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 use std::any::Any;
 
-use common_error::ext::{ BoxedError, ErrorExt };
-use common_error::status_code::StatusCode;
+use common_error::{
+    ext::{BoxedError, ErrorExt},
+    status_code::StatusCode,
+};
 use common_macro::stack_trace_debug;
 use snafu::Snafu;
 
@@ -31,9 +27,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[snafu(visibility(pub))]
 #[stack_trace_debug]
 pub enum Error {
-    #[snafu(display("Internal error"))] Internal {
-        source: BoxedError,
-    },
+    #[snafu(display("Internal error"))]
+    Internal { source: BoxedError },
 
     #[snafu(display("Memory profiling is not supported"))]
     ProfilingNotSupported,

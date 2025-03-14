@@ -1,36 +1,26 @@
-// SPDX-License-Identifier: GNU GENERAL PUBLIC LICENSE Version 3
+// Copyright 2023 Greptime Team
 //
-// Copyleft (c) 2024 James Wong. This file is part of James Wong.
-// is free software: you can redistribute it and/or modify it under
-// the terms of the GNU General Public License as published by the
-// Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-// James Wong is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
-// You should have received a copy of the GNU General Public License
-// along with James Wong.  If not, see <https://www.gnu.org/licenses/>.
-//
-// IMPORTANT: Any software that fully or partially contains or uses materials
-// covered by this license must also be released under the GNU GPL license.
-// This includes modifications and derived works.
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 mod error;
 
-use std::ffi::{ c_char, CString };
-use std::path::PathBuf;
-
-use error::{
-    BuildTempPathSnafu,
-    DumpProfileDataSnafu,
-    OpenTempFileSnafu,
-    ProfilingNotEnabledSnafu,
-    ReadOptProfSnafu,
+use std::{
+    ffi::{CString, c_char},
+    path::PathBuf,
 };
-use snafu::{ ensure, ResultExt };
+
+use error::{BuildTempPathSnafu, DumpProfileDataSnafu, OpenTempFileSnafu, ProfilingNotEnabledSnafu, ReadOptProfSnafu};
+use snafu::{ResultExt, ensure};
 use tokio::io::AsyncReadExt;
 
 use crate::error::Result;
@@ -40,38 +30,27 @@ const OPT_PROF: &[u8] = b"opt.prof\0";
 
 pub async fn dump_profile() -> Result<Vec<u8>> {
     ensure!(is_prof_enabled()?, ProfilingNotEnabledSnafu);
-    let tmp_path = tempfile::tempdir().map_err(|_| {
-        (BuildTempPathSnafu {
-            path: std::env::temp_dir(),
-            location: todo!(),
-        }).build()
-    })?;
+    let tmp_path = tempfile::tempdir().map_err(|_| BuildTempPathSnafu { path: std::env::temp_dir() }.build())?;
 
     let mut path_buf = PathBuf::from(tmp_path.path());
-    path_buf.push("mywebnote.hprof");
+    path_buf.push("myapp.hprof");
 
     let path = path_buf
         .to_str()
-        .ok_or_else(|| (BuildTempPathSnafu { path: &path_buf, location: todo!() }).build())?
+        .ok_or_else(|| BuildTempPathSnafu { path: &path_buf }.build())?
         .to_string();
 
     let mut bytes = CString::new(path.as_str())
-        .map_err(|_| (BuildTempPathSnafu { path: &path_buf, location: todo!() }).build())?
+        .map_err(|_| BuildTempPathSnafu { path: &path_buf }.build())?
         .into_bytes_with_nul();
 
     {
         // #safety: we always expect a valid temp file path to write profiling data to.
         let ptr = bytes.as_mut_ptr() as *mut c_char;
-        unsafe {
-            tikv_jemalloc_ctl::raw
-                ::write(PROF_DUMP, ptr)
-                .context(DumpProfileDataSnafu { path: path_buf })?;
-        }
+        unsafe { tikv_jemalloc_ctl::raw::write(PROF_DUMP, ptr).context(DumpProfileDataSnafu { path: path_buf })? }
     }
 
-    let mut f = tokio::fs::File
-        ::open(path.as_str()).await
-        .context(OpenTempFileSnafu { path: &path })?;
+    let mut f = tokio::fs::File::open(path.as_str()).await.context(OpenTempFileSnafu { path: &path })?;
     let mut buf = vec![];
     let _ = f.read_to_end(&mut buf).await.context(OpenTempFileSnafu { path })?;
     Ok(buf)

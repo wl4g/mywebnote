@@ -159,7 +159,7 @@ async fn start_server(config: &Arc<AppConfig>) {
     }
 }
 
-fn on_panic(info: &std::panic::PanicInfo) {
+fn on_panic(info: &std::panic::PanicHookInfo) {
     let info = info.to_string().replace('\n', " ");
     tracing::error!(%info);
     eprintln!(":: Panic Error ::\n{}", info)
