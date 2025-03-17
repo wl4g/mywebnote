@@ -18,4 +18,33 @@
 // covered by this license must also be released under the GNU GPL license.
 // This includes modifications and derived works.
 
+use tokio::signal;
+
 pub mod cmd;
+
+async fn botwaf_shutdown_signal() {
+    let ctrl_c = async {
+        signal::ctrl_c().await.expect("failed to install Ctrl+C handler");
+    };
+
+    #[cfg(unix)]
+    let terminate = async {
+        signal::unix::signal(signal::unix::SignalKind::terminate())
+            .expect("failed to install signal handler")
+            .recv()
+            .await;
+    };
+
+    #[cfg(not(unix))]
+    let terminate = std::future::pending::<()>();
+
+    // Wait for Ctrl+C or `kill` signal to exit.
+    tokio::select! {
+        _ = ctrl_c => {
+            println!("Received Ctrl+C signal, shutting down...");
+        },
+        _ = terminate => {
+            println!("Received SIGTERM signal, shutting down...");
+        },
+    }
+}

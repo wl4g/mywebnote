@@ -7,6 +7,6 @@
     },
     "[rust]": {
         "editor.defaultFormatter": "statiolake.vscode-rustfmt",
-        "editor.formatOnSave": false
+        "editor.formatOnSave": true
     },
 }

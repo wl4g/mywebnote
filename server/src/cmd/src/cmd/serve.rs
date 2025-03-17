@@ -18,53 +18,44 @@
 // covered by this license must also be released under the GNU GPL license.
 // This includes modifications and derived works.
 
-use std::env;
-use std::sync::Arc;
-use clap::Arg;
-use clap::Command;
+use std::{env, sync::Arc};
 
+use axum::{Router, routing::get};
+use axum_prometheus::PrometheusMetricLayer;
+use clap::{Arg, Command};
+use server_core::{
+    config::{
+        config,
+        config::{AppConfig, GIT_BUILD_DATE, GIT_COMMIT_HASH, GIT_VERSION},
+        swagger,
+    },
+    context::state::AppState,
+    mgmt::{apm, apm::metrics::handle_metrics, health::init as health_router},
+    route::{
+        api_v1::users::init as api_v1_users_router,
+        auths::{auth_middleware, init as auth_router},
+        browser_indexeddb::init as browser_indexeddb_router,
+        document::init as document_router,
+        folder::init as folder_router,
+        settings::init as settings_router,
+        user::init as user_router,
+    },
+};
+use tokio::{net::TcpListener, sync::oneshot, task::JoinHandle};
 use tower::ServiceBuilder;
 use tower_http::trace::TraceLayer;
 use tracing::info;
 
-use tokio::task::JoinHandle;
-use tokio::net::TcpListener;
-use tokio::sync::oneshot;
-
-use axum::Router;
-use axum::routing::get;
-use axum_prometheus::PrometheusMetricLayer;
-
-use server_core::config::config;
-use server_core::config::config::AppConfig;
-use server_core::config::config::GIT_BUILD_DATE;
-use server_core::config::config::GIT_COMMIT_HASH;
-use server_core::config::config::GIT_VERSION;
-use server_core::config::swagger;
-use server_core::context::state::AppState;
-use server_core::mgmt::apm;
-use server_core::mgmt::apm::metrics::handle_metrics;
-use server_core::mgmt::health::init as health_router;
-use server_core::route::auths::auth_middleware;
-use server_core::route::auths::init as auth_router;
-use server_core::route::user::init as user_router;
-use server_core::route::document::init as document_router;
-use server_core::route::folder::init as folder_router;
-use server_core::route::settings::init as settings_router;
-use server_core::route::browser_indexeddb::init as browser_indexeddb_router;
-use server_core::route::api_v1::users::init as api_v1_users_router;
+use crate::botwaf_shutdown_signal;
 
 // Check for the allocator used: 'objdump -t target/debug/mywebnote | grep mi_os_alloc'
 // see:https://rustcc.cn/article?id=75f290cd-e8e9-4786-96dc-9a44e398c7f5
 #[global_allocator]
-//static GLOBAL: std::alloc::System = std::alloc::System;
+// static GLOBAL: std::alloc::System = std::alloc::System;
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
 #[allow(unused)]
-async fn start_mgmt_server(
-    config: &Arc<AppConfig>,
-    signal_sender: oneshot::Sender<()>
-) -> JoinHandle<()> {
+async fn start_mgmt_server(config: &Arc<AppConfig>, signal_sender: oneshot::Sender<()>) -> JoinHandle<()> {
     let (prometheus_layer, _) = PrometheusMetricLayer::pair();
 
     let app: Router = Router::new().route("/metrics", get(handle_metrics)).layer(prometheus_layer);
@@ -75,10 +66,9 @@ async fn start_mgmt_server(
     tokio::spawn(async move {
         // TODO When started call to signal sender.
         let _ = signal_sender.send(());
-        axum::serve(
-            tokio::net::TcpListener::bind(&bind_addr).await.unwrap(),
-            app.into_make_service()
-        ).await.unwrap_or_else(|e| panic!("Error starting management server: {}", e));
+        axum::serve(tokio::net::TcpListener::bind(&bind_addr).await.unwrap(), app.into_make_service())
+            .await
+            .unwrap_or_else(|e| panic!("Error starting management server: {}", e));
     })
 }
 
@@ -131,7 +121,7 @@ async fn start_server(config: &Arc<AppConfig>) {
                              uri = %request.uri(),
                          )
                 })
-            )
+            ),
     );
     //.route_layer(axum::Extension(app_state));
 
@@ -148,7 +138,11 @@ async fn start_server(config: &Arc<AppConfig>) {
         }
     };
 
-    match axum::serve(listener, app_routes.into_make_service()).tcp_nodelay(true).await {
+    match axum::serve(listener, app_routes.into_make_service())
+        .with_graceful_shutdown(botwaf_shutdown_signal())
+        .tcp_nodelay(true)
+        .await
+    {
         Ok(_) => {
             tracing::info!("Web server shut down gracefully");
         }
@@ -167,8 +161,7 @@ fn on_panic(info: &std::panic::PanicHookInfo) {
 
 fn print_launch_resume(config: &Arc<AppConfig>, verbose: bool) {
     // http://www.network-science.de/ascii/#larry3d,graffiti,basic,drpepper,rounded,roman
-    let ascii_name =
-        r#"
+    let ascii_name = r#"
          __      __          __          __  __          __             
          /'\_/`\            /\ \  __/\ \        /\ \        /\ \/\ \        /\ \__          
         /\      \  __  __   \ \ \/\ \ \ \     __\ \ \____   \ \ `\\ \    ___\ \ ,_\    __   
@@ -273,9 +266,7 @@ mod tests {
     #[test]
     fn test_cli_start_with_config() {
         let app = build_cli();
-        let matches = app
-            .try_get_matches_from(vec!["", "start", "--config", "config.yaml"])
-            .unwrap();
+        let matches = app.try_get_matches_from(vec!["", "start", "--config", "config.yaml"]).unwrap();
         let start_matches = matches.subcommand_matches("start").unwrap();
         assert_eq!(start_matches.get_one::<String>("config").unwrap(), "config.yaml");
     }
