@@ -76,4 +76,4 @@ RUN echo 'deb http://mirrors.aliyun.com/debian bookworm main contrib non-free no
 COPY --from=builder /usr/local/cargo/bin/mywebnote /usr/local/bin/mywebnote
 
 # Set the run entrypoint of the container.
-CMD ["mywebnote"]
+ENTRYPOINT ["mywebnote"]
