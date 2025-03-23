@@ -46,7 +46,7 @@ use tower::ServiceBuilder;
 use tower_http::trace::TraceLayer;
 use tracing::info;
 
-use crate::botwaf_shutdown_signal;
+use crate::tokio_graceful_shutdown_signal;
 
 // Check for the allocator used: 'objdump -t target/debug/mywebnote | grep mi_os_alloc'
 // see:https://rustcc.cn/article?id=75f290cd-e8e9-4786-96dc-9a44e398c7f5
@@ -139,7 +139,7 @@ async fn start_server(config: &Arc<AppConfig>) {
     };
 
     match axum::serve(listener, app_routes.into_make_service())
-        .with_graceful_shutdown(botwaf_shutdown_signal())
+        .with_graceful_shutdown(tokio_graceful_shutdown_signal())
         .tcp_nodelay(true)
         .await
     {

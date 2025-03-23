@@ -61,7 +61,7 @@ server-types = { path = "src/types" }
 server-utils = { path = "src/utils" }
 # Lang libs
 regex = "1.10.3"
-chrono = "0.4.38"
+chrono = "0.4.40"
 uuid = "1.9.1"
 thiserror = "1.0.61"
 anyhow = "1.0.86"

@@ -22,7 +22,7 @@ use tokio::signal;
 
 pub mod cmd;
 
-async fn botwaf_shutdown_signal() {
+async fn tokio_graceful_shutdown_signal() {
     let ctrl_c = async {
         signal::ctrl_c().await.expect("failed to install Ctrl+C handler");
     };

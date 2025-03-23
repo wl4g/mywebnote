@@ -32,4 +32,4 @@ name = "mywebnote"
 path = "src/bin/mywebnote.rs"
 
 [build-dependencies]
-chrono = { version = "0.4.38", default-features = false, features = ["clock"] }
+chrono = { workspace = true, default-features = false, features = ["clock"] }
