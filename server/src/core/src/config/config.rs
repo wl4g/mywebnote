@@ -18,21 +18,20 @@
 // covered by this license must also be released under the GNU GPL license.
 // This includes modifications and derived works.
 
-use std::{ env, ops::Deref, sync::Arc, time::Duration };
+use std::{env, ops::Deref, sync::Arc, time::Duration};
 
 use anyhow::Ok;
 use arc_swap::ArcSwap;
-use dotenv::dotenv;
-use globset::{ Glob, GlobSet, GlobSetBuilder };
-use once_cell::sync::Lazy;
-use serde::{ Deserialize, Serialize };
 // use std::fs::File;
 // use std::io::Read;
 // use std::path::Path;
 use config::Config;
+use globset::{Glob, GlobSet, GlobSetBuilder};
+use once_cell::sync::Lazy;
+use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::mgmt::{ health::HEALTHZ_URI, apm::logging::LogMode };
+use crate::mgmt::{apm::logging::LogMode, health::HEALTHZ_URI};
 
 // Global static resources.
 pub const DEFAULT_INDEX_HTML: &str = include_str!("../../../../static/index.html");
@@ -335,7 +334,7 @@ impl AppConfigProperties {
     }
 
     pub fn validate(self) -> Result<AppConfigProperties, anyhow::Error> {
-        //self.validate();
+        // self.validate();
         Ok(self)
     }
 
@@ -358,7 +357,7 @@ impl AppConfigProperties {
                     // Notice: Use double "_" to distinguish between different hierarchy struct or attribute alies at the same level.
                     .separator("__")
                     .convert_case(config::Case::Cobol)
-                    .keep_prefix(false) // Remove the prefix when matching.
+                    .keep_prefix(false), // Remove the prefix when matching.
             )
             .build()
             .unwrap_or_else(|err| panic!("Error parsing config: {}", err))
@@ -450,9 +449,7 @@ impl Default for OAuth2Properties {
             token_url: None,
             redirect_url: None,
             // see:https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
-            scope: Some(
-                "openid profile user:email user:follow read:user read:project public_repo".to_string()
-            ),
+            scope: Some("openid profile user:email user:follow read:user read:project public_repo".to_string()),
             user_info_url: None,
         }
     }
@@ -615,8 +612,8 @@ impl AppConfig {
             builder.add(Glob::new(HEALTHZ_URI).unwrap());
             builder.add(Glob::new(format!("{}/**", HEALTHZ_URI).as_str()).unwrap());
             // The default accessing to swagger ui required authentication.
-            //builder.add(Glob::new(&config.swagger.swagger_ui_path).unwrap());
-            //builder.add(Glob::new(&config.swagger.swagger_openapi_url).unwrap());
+            // builder.add(Glob::new(&config.swagger.swagger_ui_path).unwrap());
+            // builder.add(Glob::new(&config.swagger.swagger_openapi_url).unwrap());
             builder.add(Glob::new("/public/**").unwrap());
             builder.add(Glob::new("/static/**").unwrap());
             globset = Some(builder.build().unwrap());
@@ -624,14 +621,8 @@ impl AppConfig {
 
         Arc::new(AppConfig {
             inner: config.clone(),
-            auth_jwt_ak_name: config.auth.jwt_ak_name
-                .to_owned()
-                .unwrap_or(String::from("_ak"))
-                .to_string(),
-            auth_jwt_rk_name: config.auth.jwt_rk_name
-                .to_owned()
-                .unwrap_or(String::from("_rk"))
-                .to_string(),
+            auth_jwt_ak_name: config.auth.jwt_ak_name.to_owned().unwrap_or(String::from("_ak")).to_string(),
+            auth_jwt_rk_name: config.auth.jwt_rk_name.to_owned().unwrap_or(String::from("_rk")).to_string(),
             auth_anonymous_glob_matcher: globset,
         })
     }
@@ -645,7 +636,7 @@ impl Default for WebNoteProperties {
                 String::from("blocksuite"),
                 String::from("board"),
                 String::from("menu"),
-                String::from("blob")
+                String::from("blob"),
             ],
         }
     }
@@ -653,8 +644,7 @@ impl Default for WebNoteProperties {
 
 #[allow(unused)]
 fn init() -> Arc<AppConfig> {
-    let config = env
-        ::var("MYWEBNOTE_CFG_PATH")
+    let config = env::var("MYWEBNOTE_CFG_PATH")
         .map(|path| {
             AppConfigProperties::parse(path.as_str())
                 .validate()
